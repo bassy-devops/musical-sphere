@@ -1,6 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+import { OrbitControls, Environment } from '@react-three/drei';
 import { XR, createXRStore } from '@react-three/xr';
 import { FloatingSphere } from './FloatingSphere';
 import { Suspense, useState, useCallback, useEffect, useRef, useMemo } from 'react';
@@ -44,7 +43,7 @@ const generateSphere = (id: number, arMode: boolean = false): SphereData => {
 
 export const Scene = () => {
     const [spheres, setSpheres] = useState<SphereData[]>(() =>
-        Array.from({ length: 15 }, (_, i) => generateSphere(i, false))
+        Array.from({ length: 10 }, (_, i) => generateSphere(i, false))
     );
     const [arMode, setArMode] = useState(false);
 
@@ -110,9 +109,9 @@ export const Scene = () => {
 
     return (
         <Canvas
-            shadows
             camera={{ position: [0, 1.6, 3], fov: 50 }}
-            gl={{ preserveDrawingBuffer: true }}
+            gl={{ preserveDrawingBuffer: true, antialias: true }}
+            dpr={[1, 2]} // Limit pixel ratio for performance
         >
             <XR store={store}>
                 <Backgrounds />
@@ -120,16 +119,10 @@ export const Scene = () => {
                 {/* Non-AR controls */}
                 {!arMode && <OrbitControls />}
 
-                <ambientLight intensity={0.8} />
-                <spotLight
-                    position={[10, 10, 10]}
-                    angle={0.15}
-                    penumbra={1}
-                    intensity={2}
-                    castShadow
-                    shadow-mapSize={[512, 512]}
-                />
-                <pointLight position={[-10, -10, -10]} intensity={0.5} />
+                {/* Lighting optimized for Flat Shading */}
+                <ambientLight intensity={0.6} />
+                <directionalLight position={[10, 10, 5]} intensity={1.5} />
+                <directionalLight position={[-10, -10, -5]} intensity={0.5} color="#aaccff" />
 
                 {!arMode && <Environment preset="city" />}
 
@@ -144,16 +137,6 @@ export const Scene = () => {
                         ))}
                     </Suspense>
                 </GyroGroup>
-
-                {!arMode && <ContactShadows position={[0, -4.5, 0]} opacity={0.3} scale={20} blur={2} far={4.5} />}
-
-                {/* Disable post-processing in AR for performance */}
-                {!arMode && (
-                    <EffectComposer enableNormalPass={false}>
-                        <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} height={300} />
-                        <Vignette eskil={false} offset={0.1} darkness={1.1} />
-                    </EffectComposer>
-                )}
             </XR>
         </Canvas>
     );
