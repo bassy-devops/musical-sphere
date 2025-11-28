@@ -5,6 +5,8 @@ import { XR, createXRStore } from '@react-three/xr';
 import { FloatingSphere } from './FloatingSphere';
 import { Suspense, useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { audioEngine } from '../audio/AudioEngine';
+import { Backgrounds } from './Backgrounds';
+import { GyroGroup } from './GyroGroup';
 
 interface SphereData {
     id: number;
@@ -15,7 +17,7 @@ interface SphereData {
     autoPopTrigger?: number; // Timestamp
 }
 
-const COLORS = ["#ff00cc", "#3333ff", "#00ff99", "#ffcc00", "#ff3333", "#00ccff"];
+const COLORS = ["#FFB7B2", "#AEC6CF", "#77DD77", "#FDFD96", "#C3B1E1", "#FFB347"];
 
 const generateSphere = (id: number, arMode: boolean = false): SphereData => {
     // AR mode: smaller spawn area around user (within 2m radius, at user height)
@@ -113,28 +115,30 @@ export const Scene = () => {
             gl={{ preserveDrawingBuffer: true }}
         >
             <XR store={store}>
-                <color attach="background" args={['#111']} />
+                <Backgrounds />
 
                 {/* Non-AR controls */}
                 {!arMode && <OrbitControls />}
 
-                <ambientLight intensity={0.5} />
-                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+                <ambientLight intensity={0.8} />
+                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} castShadow />
                 <pointLight position={[-10, -10, -10]} intensity={0.5} />
 
                 {!arMode && <Environment preset="city" />}
 
-                <Suspense fallback={null}>
-                    {spheres.map(sphere => (
-                        <FloatingSphere
-                            key={sphere.id}
-                            {...sphere}
-                            onPop={() => handlePop(sphere.id)}
-                        />
-                    ))}
-                </Suspense>
+                <GyroGroup>
+                    <Suspense fallback={null}>
+                        {spheres.map(sphere => (
+                            <FloatingSphere
+                                key={sphere.id}
+                                {...sphere}
+                                onPop={() => handlePop(sphere.id)}
+                            />
+                        ))}
+                    </Suspense>
+                </GyroGroup>
 
-                {!arMode && <ContactShadows position={[0, -4.5, 0]} opacity={0.4} scale={20} blur={2} far={4.5} />}
+                {!arMode && <ContactShadows position={[0, -4.5, 0]} opacity={0.3} scale={20} blur={2} far={4.5} />}
 
                 {/* Disable post-processing in AR for performance */}
                 {!arMode && (

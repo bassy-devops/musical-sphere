@@ -179,6 +179,56 @@ function App() {
       }}>
         <p style={{ margin: 0 }}>📱 Tap & Hold to play</p>
       </div>
+      {/* Background Switcher */}
+      <div style={{
+        position: 'absolute',
+        bottom: 'env(safe-area-inset-bottom, 20px)',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        gap: '10px',
+        background: 'rgba(0,0,0,0.5)',
+        padding: '10px',
+        borderRadius: '20px',
+        zIndex: 10
+      }}>
+        <button
+          onClick={() => useStore.getState().setBackgroundMode('default')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            fontSize: '24px',
+            cursor: 'pointer',
+            opacity: useStore.getState().backgroundMode === 'default' ? 1 : 0.5
+          }}
+        >
+          ⬛
+        </button>
+        <button
+          onClick={() => useStore.getState().setBackgroundMode('camera')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            fontSize: '24px',
+            cursor: 'pointer',
+            opacity: useStore.getState().backgroundMode === 'camera' ? 1 : 0.5
+          }}
+        >
+          📷
+        </button>
+        <button
+          onClick={() => useStore.getState().setBackgroundMode('beautiful')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            fontSize: '24px',
+            cursor: 'pointer',
+            opacity: useStore.getState().backgroundMode === 'beautiful' ? 1 : 0.5
+          }}
+        >
+          ✨
+        </button>
+      </div>
     </div>
   );
 }

@@ -12,57 +12,68 @@ class AudioEngine {
         this.dest = context.createMediaStreamDestination();
 
         this.synth = new Tone.PolySynth(Tone.FMSynth, {
-            harmonicity: 3,
+            harmonicity: 3.01,
             modulationIndex: 10,
-            detune: 0,
             oscillator: {
                 type: "sine"
             },
             envelope: {
-                attack: 0.01,
-                decay: 0.1,
+                attack: 0.001,
+                decay: 1.0,
                 sustain: 0.1,
-                release: 1.2
+                release: 1.0
             },
             modulation: {
                 type: "square"
             },
             modulationEnvelope: {
-                attack: 0.5,
-                decay: 0,
-                sustain: 1,
-                release: 0.5
+                attack: 0.002,
+                decay: 0.2,
+                sustain: 0,
+                release: 0.2
             }
+        }).connect(this.dest);
+
+        // Add some reverb for that spacey handpan feel
+        const reverb = new Tone.Reverb({
+            decay: 2.5,
+            preDelay: 0.1,
+            wet: 0.3
         }).toDestination();
 
-        // Connect to recorder destination as well
-        this.synth.connect(this.dest);
+        this.synth.connect(reverb);
     }
 
     async start() {
         await Tone.start();
     }
 
-    getNote(size: number, speed: number): string {
-        const scale = ["C4", "D4", "E4", "G4", "A4", "C5", "D5", "E5", "G5", "A5", "C6", "D6", "E6"];
-        const sizeIndex = Math.floor((1.5 - size) * 10);
-        const speedOffset = Math.floor(speed);
-        const index = Math.max(0, Math.min(scale.length - 1, sizeIndex + speedOffset));
-        return scale[index];
+    getNote(color: string): string {
+        const map: Record<string, string> = {
+            "#FFB7B2": "C4", // Pink
+            "#FFB347": "D4", // Orange
+            "#FDFD96": "E4", // Yellow
+            "#77DD77": "F4", // Green
+            "#AEC6CF": "G4", // Blue
+            "#C3B1E1": "A4", // Purple
+        };
+        return map[color] || "C4";
     }
 
-    triggerNote(size: number, speed: number) {
-        const note = this.getNote(size, speed);
+    triggerNote(color: string) {
+        const note = this.getNote(color);
         this.synth.triggerAttackRelease(note, "8n");
     }
 
-    startNote(size: number, speed: number): string {
-        const note = this.getNote(size, speed);
-        this.synth.triggerAttack(note);
+    startNote(color: string): string {
+        const note = this.getNote(color);
+        // Limit duration to max 1 second even if held
+        this.synth.triggerAttackRelease(note, "1s");
         return note;
     }
 
     stopNote(note: string) {
+        // Release immediately if button is released before 2s
         this.synth.triggerRelease(note);
     }
 
