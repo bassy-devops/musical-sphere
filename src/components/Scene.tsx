@@ -121,7 +121,14 @@ export const Scene = () => {
                 {!arMode && <OrbitControls />}
 
                 <ambientLight intensity={0.8} />
-                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} castShadow />
+                <spotLight
+                    position={[10, 10, 10]}
+                    angle={0.15}
+                    penumbra={1}
+                    intensity={2}
+                    castShadow
+                    shadow-mapSize={[512, 512]}
+                />
                 <pointLight position={[-10, -10, -10]} intensity={0.5} />
 
                 {!arMode && <Environment preset="city" />}

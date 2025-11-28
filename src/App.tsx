@@ -126,44 +126,7 @@ function App() {
         </button>
       </div>
 
-      {/* AR Button - top right */}
-      <div style={{
-        position: 'absolute',
-        top: 'max(20px, env(safe-area-inset-top, 20px))',
-        right: '20px',
-        zIndex: 10
-      }}>
-        <button
-          onClick={async () => {
-            // Request AR session
-            if ('xr' in navigator) {
-              try {
-                const xr = (navigator as any).xr;
-                const isSupported = await xr.isSessionSupported('immersive-ar');
-                if (isSupported) {
-                  // Session will be requested by XR component
-                  // For now, show info
-                  alert('AR Mode Ready! The app will now display spheres in your real-world environment. Point your camera at a flat surface.');
-                } else {
-                  alert('AR is not supported on this device. Please use a WebXR-compatible browser on Android or iOS 15.4+.');
-                }
-              } catch (err) {
-                console.error('AR error:', err);
-                alert('AR features require a compatible device and browser (Chrome on Android, or Safari on iOS 15.4+).');
-              }
-            } else {
-              alert('WebXR is not available in this browser. Please use Chrome on Android or Safari on iOS 15.4+.');
-            }
-          }}
-          style={{
-            ...btnStyle,
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            padding: 'clamp(10px, 3vw, 12px) clamp(16px, 4vw, 20px)',
-          }}
-        >
-          🥽 AR
-        </button>
-      </div>
+
 
       {/* Instructions - top left */}
       <div style={{
@@ -179,16 +142,16 @@ function App() {
       }}>
         <p style={{ margin: 0 }}>📱 Tap & Hold to play</p>
       </div>
-      {/* Background Switcher */}
+      {/* Background Switcher - Top Center */}
       <div style={{
         position: 'absolute',
-        bottom: 'env(safe-area-inset-bottom, 20px)',
+        top: 'max(20px, env(safe-area-inset-top, 20px))',
         left: '50%',
         transform: 'translateX(-50%)',
         display: 'flex',
-        gap: '10px',
+        gap: '8px',
         background: 'rgba(0,0,0,0.5)',
-        padding: '10px',
+        padding: '8px',
         borderRadius: '20px',
         zIndex: 10
       }}>
@@ -197,9 +160,10 @@ function App() {
           style={{
             background: 'transparent',
             border: 'none',
-            fontSize: '24px',
+            fontSize: '20px',
             cursor: 'pointer',
-            opacity: useStore.getState().backgroundMode === 'default' ? 1 : 0.5
+            opacity: useStore.getState().backgroundMode === 'default' ? 1 : 0.5,
+            padding: '0 5px'
           }}
         >
           ⬛
@@ -209,9 +173,10 @@ function App() {
           style={{
             background: 'transparent',
             border: 'none',
-            fontSize: '24px',
+            fontSize: '20px',
             cursor: 'pointer',
-            opacity: useStore.getState().backgroundMode === 'camera' ? 1 : 0.5
+            opacity: useStore.getState().backgroundMode === 'camera' ? 1 : 0.5,
+            padding: '0 5px'
           }}
         >
           📷
@@ -221,9 +186,10 @@ function App() {
           style={{
             background: 'transparent',
             border: 'none',
-            fontSize: '24px',
+            fontSize: '20px',
             cursor: 'pointer',
-            opacity: useStore.getState().backgroundMode === 'beautiful' ? 1 : 0.5
+            opacity: useStore.getState().backgroundMode === 'beautiful' ? 1 : 0.5,
+            padding: '0 5px'
           }}
         >
           ✨
